@@ -31,6 +31,16 @@ isPalindrome x = if len `mod` 2 == 0
       len = length $ show x
       len2 = len `div` 2
 
+-- |Returns the prime factors of a number.
+factorize :: Integer -> [Integer]
+factorize num = factors
+   where
+      factors = filter primeFactor $ takeWhile lt primesMPE
+      lt x = x <= num
+      primeFactor x = num `mod` x == 0
+
+-------------------------------------------------------------------------------
+
 -- |The sum of all numbers less than 1000 divisible by
 --  3 or 5.
 problem1 :: Integer
@@ -38,8 +48,7 @@ problem1 = sum $ filter ((||) <$> divBy 3 <*> divBy 5) [1..999]
    where
       divBy x y = y `mod` x == 0
 
--- |The sum of all even Fibonacci numbers less than
---  4M.
+-- |The sum of all even Fibonacci numbers less than 4M.
 problem2 :: Integer
 problem2 = sum $ takeWhile lt $ filter isEven $ fibs
    where
@@ -106,3 +115,22 @@ problem8 = head $ reverse $ sort $ map productOf $ windows 13 num
              \84580156166097919133875499200524063689912560717606\
              \05886116467109405077541002256983155200055935729725\
              \71636269561882670428252483600823257530420752963450"
+
+-- |Finds the product of a,b,c in N such that a²+b²=c² and
+--  a+b+c=1000.
+problem9 :: Integer
+problem9 = head
+           $ [a*b*c | a <- [1..1000],
+                      b <- [1..1000],
+                      isIntegerSquare a b,
+                      a+b+ intsqrt a b == 1000,
+                      let c = 1000 - a - b]
+   where
+      isIntegerSquare a b = fromIntegral (round (sq a b)) == sq a b
+      sq :: Integer -> Integer -> Float
+      sq a b = sqrt $ fromIntegral $ (a*a) + (b*b)
+      intsqrt a b = round $ sq a b
+
+-- |The sum of all primes below 2M.
+problem10 :: Integer
+problem10 = sum $ takeWhile (<2000000) primesMPE
